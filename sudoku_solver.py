@@ -2,11 +2,15 @@ import numpy
 
 size = 9
 region_size = int(numpy.sqrt(size))
-#sudoku problem
-#cells with value 0 are vacant cells
-
+EMPTY = 0
+INVALID_INDEX = -1
 
 def get_initial_sudoku_board(option):
+    """
+    Returns a list that contains the initial sudoku
+    board state. The board returned depends on which
+    option (an int) was passed in. 
+    """
     return{
         1: [[6, 5, 0, 8, 7, 3, 0, 9, 0],
             [0, 0, 3, 2, 5, 0, 0, 0, 8],
@@ -29,14 +33,21 @@ def get_initial_sudoku_board(option):
             [0, 9, 0, 6, 2, 5, 0, 8, 1]]
     }[option]
     
-test = numpy.array(get_initial_sudoku_board(1))
+tested_sudoku_board = numpy.array(get_initial_sudoku_board(1))
 
-print(test) 
-def print_board():
-    for row in test:
+def print_unformatted_board():
+    """
+    Prints the board. Every row is on its own line.
+    """
+    for row in tested_sudoku_board:
         print(row)
 
+
 def print_formatted_board():
+    """
+    Prints a formatted board so that regions are 
+    separated by a grid.
+    """
     for i in range(size):
         if i % 3 == 0  and i != 0:
             print("---------------------")
@@ -45,33 +56,50 @@ def print_formatted_board():
             if j % 3 == 0 and j != 0:
                 print("| ", end = "")
             if j == 8:
-                print(test[i][j])
+                print(tested_sudoku_board[i][j])
             else:
-                print(test[i][j], end = " ")
+                print(tested_sudoku_board[i][j], end = " ")
 
-def get_region(row, col):
+
+def get_cell_region(row_index, col_index):
+    """
+    A cell's y,x index is passed in as an argument. This function
+    determines what region the cell is in. Returns a list with all
+    numbers in that region.
+    """
     region_array = []
-    row_start = (row // region_size) * region_size
-    col_start = (col // region_size) * region_size
 
-    for i in range(row_start, row_start + region_size):
-        for j in range(col_start, col_start + region_size):
-            region_array.append(test[i][j])
+    region_row_start_index = (row_index // region_size) * region_size
+    region_col_start_index = (col_index // region_size) * region_size
+
+    region_row_end_index = region_row_start_index + region_size
+    region_col_end_index = region_col_start_index + region_size
+
+    for y in range(region_row_start_index, region_row_end_index):
+        for x in range(region_col_start_index, region_col_end_index):
+            region_array.append(tested_sudoku_board[y][x])
     
     return region_array
 
-def check_board_validity():
-    for i in range(0, size):
-        row_no_zeroes = test[i, :][test[i, :] != 0]
-        col_no_zeroes = test[:, i][test[:, i] != 0]
 
-        if (numpy.unique(row_no_zeroes).size < row_no_zeroes.size or
-            numpy.unique(col_no_zeroes).size < col_no_zeroes.size):
+def check_board_for_duplicates():
+    """
+    Returns True if a board has no duplicate numbers for every row, 
+    column, and region. Returns False otherwise. 
+    """
+    for index in range(0, size):
+        # TODO Make a function that handles 0 removal
+        row_without_zeroes = tested_sudoku_board[index, :][tested_sudoku_board[index, :] != 0]
+        col_without_zeroes = tested_sudoku_board[:, index][tested_sudoku_board[:, index] != 0]
+        # TODO Make a function that checks for uniquenes
+        if (numpy.unique(row_without_zeroes).size < row_without_zeroes.size or
+            numpy.unique(col_without_zeroes).size < col_without_zeroes.size):
             return False
 
-    for i in range(region_size):
-        for j in range(region_size):
-            region = numpy.asarray(get_region(i * region_size, j * region_size))
+    for row_index in range(region_size):
+        for col_index in range(region_size):
+            region = numpy.asarray(get_cell_region(row_index * region_size, 
+                                                   col_index * region_size))
             region_no_zeroes = region[region != 0]
 
             if(numpy.unique(region_no_zeroes).size < region_no_zeroes.size):
@@ -79,75 +107,81 @@ def check_board_validity():
 
     return True
 
-#function to check if all cells are assigned or not
-#if there is any unassigned cell
-#then this function will change the values of
-#row and col accordingly
-def unsolved_cell():
-    found_empty_cell = 0
-    
-    for i in range(0, size):
-        for j in range(0, size):
-            #cell is unassigned
-            if test[i][j] == 0:
-                row = i
-                col = j
-                found_empty_cell = 1
-                cell_info = [row, col, found_empty_cell]
-                return cell_info
-    cell_info = [-1, -1, found_empty_cell]
-    return cell_info
 
-#function to check if we can put a
-#value in a paticular cell or not
-def number_is_valid(n, row, col):
-    region = get_region(row, col)
+def find_next_unsolved_cell():
+    """
+    Returns a tuple that contains the row and column index for
+    the first cell encountered that contains and EMPTY value.
+    Otherwise, it returns a tuple with INVALID_INDEX.  
+    """
+    for row_index in range(0, size):
+        for col_index in range(0, size):
+            #cell is unassigned
+            if tested_sudoku_board[row_index][col_index] == EMPTY:
+                return (row_index, col_index)
+    
+    return (INVALID_INDEX, INVALID_INDEX)
+
+
+def number_is_valid(number_attempted, row_index, col_index):
+    """
+    Returns True if number is valid. False otherwise. Checks to see
+    if number provided is already in the row, column, region that the 
+    cell is in.
+    """
+    cell_region = get_cell_region(row_index, col_index)
     
     #checking in row
-    if n in test[row, :]:
+    if number_attempted in tested_sudoku_board[row_index, :]:
         return False
 
     #checking in column
-    if n in test[:, col]:
+    if number_attempted in tested_sudoku_board[:, col_index]:
         return False
 
     #checking submatrix
-    if n in region:
+    if number_attempted in cell_region:
         return False
 
     return True
 
-#function to check if we can put a
-#value in a paticular cell or not
+
 def solve_sudoku():
-    #if all cells are assigned then the sudoku is already solved
-    #pass by reference because number_unassigned will change the values of row and col
-    cell_info = unsolved_cell()
-    if cell_info[2] == 0:
+    """
+    Returns True if a solution has been found, otherwise returns false.
+    The function looks for the first empty cell it can find. Then it tries
+    to assign a value to that cell if it's valid. It then moves on to the 
+    next empty cell and repeats the process until no more empty cells are 
+    left (in which case the board is assumed to be solved). If there's no 
+    valid number for a particular cell, it goes back to the previous cell 
+    assigned and tries a different number.  
+    """
+    cell_indexes = find_next_unsolved_cell()
+    if cell_indexes[0] == INVALID_INDEX:
         return True
-    row = cell_info[0]
-    col = cell_info[1]
-    #number between 1 to 9
-    for i in range(1, size + 1):
-        #if we can assign i to the cell or not
-        #the cell is matrix[row][col]
-        if number_is_valid(i, row, col):
-            test[row][col] = i
-            #backtracking
+    
+    row_index = cell_indexes[0]
+    col_index = cell_indexes[1]
+    
+    for number_option in range(1, size + 1):
+        if number_is_valid(number_option, row_index, col_index):
+            tested_sudoku_board[row_index][col_index] = number_option
+            # number_option has been successfully assigned so now
+            # we try to assign a number in the next empty cell
             if solve_sudoku():
                 return True
-            #if we can't proceed with this solution
-            #reassign the cell
-            test[row][col] = 0
+            # if this number_option doesn't lead to a solution,
+            # reassign the cell to the default and try one of the
+            # remaining options
+            tested_sudoku_board[row_index][col_index] = EMPTY
     return False
 
-# We want to make sure the board provided
-# has valid values before proceeding
-if not check_board_validity():
+# Make sure board provided doesn't have invalid numbers
+if not check_board_for_duplicates():
     print("Invalid board")
 elif solve_sudoku():
     #Double check to make sure algorithm is working properly
-    if check_board_validity(): 
+    if check_board_for_duplicates(): 
         print_formatted_board()
     else:
         print("Unexpected error during solve. Result is not valid.")
