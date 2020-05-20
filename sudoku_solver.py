@@ -1,7 +1,7 @@
 import numpy
 
-size = 9
-region_size = int(numpy.sqrt(size))
+BOARD_SIZE = 9
+REGION_SIZE = int(numpy.sqrt(BOARD_SIZE))
 EMPTY = 0
 INVALID_INDEX = -1
 
@@ -22,8 +22,8 @@ def get_initial_sudoku_board(option):
             [2, 0, 0, 0, 4, 8, 9, 0, 0],
             [0, 9, 0, 6, 2, 5, 0, 8, 1]],
 
-        2: [[5, 5, 0, 8, 7, 3, 0, 9, 0],
-            [0, 0, 3, 2, 5, 0, 0, 0, 8],
+        2: [[6, 5, 0, 8, 7, 3, 0, 9, 0],
+            [0, 6, 3, 2, 5, 0, 0, 0, 8],
             [9, 8, 0, 1, 0, 4, 3, 5, 7],
             [1, 0, 5, 0, 0, 0, 0, 0, 0],
             [4, 0, 0, 0, 0, 0, 0, 0, 2],
@@ -33,7 +33,7 @@ def get_initial_sudoku_board(option):
             [0, 9, 0, 6, 2, 5, 0, 8, 1]]
     }[option]
     
-tested_sudoku_board = numpy.array(get_initial_sudoku_board(1))
+tested_sudoku_board = numpy.array(get_initial_sudoku_board(2))
 
 def print_unformatted_board():
     """
@@ -48,11 +48,11 @@ def print_formatted_board():
     Prints a formatted board so that regions are 
     separated by a grid.
     """
-    for i in range(size):
+    for i in range(BOARD_SIZE):
         if i % 3 == 0  and i != 0:
             print("---------------------")
 
-        for j in range(size):
+        for j in range(BOARD_SIZE):
             if j % 3 == 0 and j != 0:
                 print("| ", end = "")
             if j == 8:
@@ -69,11 +69,11 @@ def get_cell_region(row_index, col_index):
     """
     region_array = []
 
-    region_row_start_index = (row_index // region_size) * region_size
-    region_col_start_index = (col_index // region_size) * region_size
+    region_row_start_index = (row_index // REGION_SIZE) * REGION_SIZE
+    region_col_start_index = (col_index // REGION_SIZE) * REGION_SIZE
 
-    region_row_end_index = region_row_start_index + region_size
-    region_col_end_index = region_col_start_index + region_size
+    region_row_end_index = region_row_start_index + REGION_SIZE
+    region_col_end_index = region_col_start_index + REGION_SIZE
 
     for y in range(region_row_start_index, region_row_end_index):
         for x in range(region_col_start_index, region_col_end_index):
@@ -87,7 +87,7 @@ def check_board_for_duplicates():
     Returns True if a board has no duplicate numbers for every row, 
     column, and region. Returns False otherwise. 
     """
-    for index in range(0, size):
+    for index in range(0, BOARD_SIZE):
         # TODO Make a function that handles 0 removal
         row_without_zeroes = tested_sudoku_board[index, :][tested_sudoku_board[index, :] != 0]
         col_without_zeroes = tested_sudoku_board[:, index][tested_sudoku_board[:, index] != 0]
@@ -96,10 +96,10 @@ def check_board_for_duplicates():
             numpy.unique(col_without_zeroes).size < col_without_zeroes.size):
             return False
 
-    for row_index in range(region_size):
-        for col_index in range(region_size):
-            region = numpy.asarray(get_cell_region(row_index * region_size, 
-                                                   col_index * region_size))
+    for row_index in range(REGION_SIZE):
+        for col_index in range(REGION_SIZE):
+            region = numpy.asarray(get_cell_region(row_index * REGION_SIZE, 
+                                                   col_index * REGION_SIZE))
             region_no_zeroes = region[region != 0]
 
             if(numpy.unique(region_no_zeroes).size < region_no_zeroes.size):
@@ -114,8 +114,8 @@ def find_next_unsolved_cell():
     the first cell encountered that contains and EMPTY value.
     Otherwise, it returns a tuple with INVALID_INDEX.  
     """
-    for row_index in range(0, size):
-        for col_index in range(0, size):
+    for row_index in range(0, BOARD_SIZE):
+        for col_index in range(0, BOARD_SIZE):
             #cell is unassigned
             if tested_sudoku_board[row_index][col_index] == EMPTY:
                 return (row_index, col_index)
@@ -163,7 +163,7 @@ def solve_sudoku():
     row_index = cell_indexes[0]
     col_index = cell_indexes[1]
     
-    for number_option in range(1, size + 1):
+    for number_option in range(1, BOARD_SIZE + 1):
         if number_is_valid(number_option, row_index, col_index):
             tested_sudoku_board[row_index][col_index] = number_option
             # number_option has been successfully assigned so now
