@@ -4,6 +4,9 @@ BOARD_SIZE = 9
 REGION_SIZE = int(numpy.sqrt(BOARD_SIZE))
 EMPTY = 0
 INVALID_INDEX = -1
+COLUMN = 0
+ROW = 1
+REGION = 2
 
 def get_initial_sudoku_board(option):
     """
@@ -81,6 +84,35 @@ def get_cell_region(row_index, col_index):
     
     return region_array
 
+def get_board_section(which_section, indexes):
+    """
+    Returns an array that contains the values in a column, row, or 
+    region from the sudoku board. The first parameter determines
+    the section needed (a row, column, or region) and the index helps
+    identify the location.
+    """
+    row = 0
+    col = 0
+    return True
+
+
+def get_valid_numbers_from_section(row_or_column_to_check, index):
+    """
+    
+    """
+    return True
+
+
+def check_section_for_duplicates():
+    """
+    
+    """
+    for index in range(0, BOARD_SIZE):
+        section = get_valid_numbers_from_section(, index)
+
+
+    return False
+
 
 def check_board_for_duplicates():
     """
@@ -96,10 +128,10 @@ def check_board_for_duplicates():
             numpy.unique(col_without_zeroes).size < col_without_zeroes.size):
             return False
 
-    for row_index in range(REGION_SIZE):
-        for col_index in range(REGION_SIZE):
-            region = numpy.asarray(get_cell_region(row_index * REGION_SIZE, 
-                                                   col_index * REGION_SIZE))
+    for region_row_index in range(REGION_SIZE):
+        for region_col_index in range(REGION_SIZE):
+            region = numpy.asarray(get_cell_region(region_row_index * REGION_SIZE, 
+                                                   region_col_index * REGION_SIZE))
             region_no_zeroes = region[region != 0]
 
             if(numpy.unique(region_no_zeroes).size < region_no_zeroes.size):
@@ -175,6 +207,7 @@ def solve_sudoku():
             # remaining options
             tested_sudoku_board[row_index][col_index] = EMPTY
     return False
+
 
 # Make sure board provided doesn't have invalid numbers
 if not check_board_for_duplicates():
