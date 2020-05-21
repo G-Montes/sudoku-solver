@@ -36,7 +36,7 @@ def get_initial_sudoku_board(option):
             [0, 9, 0, 6, 2, 5, 0, 8, 1]]
     }[option]
     
-tested_sudoku_board = numpy.array(get_initial_sudoku_board(2))
+tested_sudoku_board = numpy.array(get_initial_sudoku_board(1))
 
 def print_unformatted_board():
     """
@@ -44,7 +44,6 @@ def print_unformatted_board():
     """
     for row in tested_sudoku_board:
         print(row)
-
 
 def print_formatted_board():
     """
@@ -63,6 +62,11 @@ def print_formatted_board():
             else:
                 print(tested_sudoku_board[i][j], end = " ")
 
+def get_region_start_index(index):
+    return (index // REGION_SIZE) * REGION_SIZE
+
+def get_region_end_index(start_index):
+    return start_index + REGION_SIZE - 1
 
 def get_cell_region(row_index, col_index):
     """
@@ -72,18 +76,17 @@ def get_cell_region(row_index, col_index):
     """
     region_array = []
 
-    region_row_start_index = (row_index // REGION_SIZE) * REGION_SIZE
-    region_col_start_index = (col_index // REGION_SIZE) * REGION_SIZE
+    region_row_start_index = get_region_start_index(row_index)
+    region_col_start_index = get_region_start_index(col_index)
 
-    region_row_end_index = region_row_start_index + REGION_SIZE
-    region_col_end_index = region_col_start_index + REGION_SIZE
+    region_row_end_index = get_region_end_index(region_row_start_index)
+    region_col_end_index = get_region_end_index(region_col_start_index)
 
-    for y in range(region_row_start_index, region_row_end_index):
-        for x in range(region_col_start_index, region_col_end_index):
+    for y in range(region_row_start_index, region_row_end_index + 1):
+        for x in range(region_col_start_index, region_col_end_index + 1):
             region_array.append(tested_sudoku_board[y][x])
     
-    return region_array
-
+    return numpy.array(region_array)
 
 def get_valid_numbers_from_section(section):
     """
@@ -93,44 +96,48 @@ def get_valid_numbers_from_section(section):
     return numpy.array([value for value in section 
                         if value != EMPTY])
 
+def get_section(section_type, section_number):
+    if section_type == ROW:
+        return tested_sudoku_board[section_number, :] 
+    elif section_type == COLUMN:
+        return tested_sudoku_board[:, section_number]
+    else:
+        row_index = get_region_start_index(section_number)
+        col_index = (section_number - row_index) * REGION_SIZE
 
-def check_section_for_duplicates(section):
+        return get_cell_region(row_index, col_index)
+
+def section_has_duplicates(section):
     """
-    Returns True if the section contains no duplicate values. Returns false
+    Returns True if the section contains duplicate values. Returns false
     otherwise. Invalid entries are removed prior to checking for uniqueness.
     """
     valid_section_values = get_valid_numbers_from_section(section)
     unique_section_values = numpy.unique(valid_section_values)
 
     if unique_section_values.size < valid_section_values.size:
-        return False
-    return True
+        return True
+    return False
 
 def check_board_for_duplicates():
     """
     Returns True if a board has no duplicate numbers for every row, 
     column, and region. Returns False otherwise. 
     """
-    for index in range(0, BOARD_SIZE):
-        # TODO Make a function that handles 0 removal
-        row_without_zeroes = tested_sudoku_board[index, :][tested_sudoku_board[index, :] != 0]
-        col_without_zeroes = tested_sudoku_board[:, index][tested_sudoku_board[:, index] != 0]
-        # TODO Make a function that checks for uniquenes
-        if (numpy.unique(row_without_zeroes).size < row_without_zeroes.size or
-            numpy.unique(col_without_zeroes).size < col_without_zeroes.size):
-            return False
-
-    for region_row_index in range(REGION_SIZE):
-        for region_col_index in range(REGION_SIZE):
-            region = numpy.asarray(get_cell_region(region_row_index * REGION_SIZE, 
-                                                   region_col_index * REGION_SIZE))
-            region_no_zeroes = region[region != 0]
-
-            if(numpy.unique(region_no_zeroes).size < region_no_zeroes.size):
+    for section_number in range(0, BOARD_SIZE):
+        # row
+            row = get_section(ROW, section_number)
+            if section_has_duplicates(row):
                 return False
-
+        # col
+            col = get_section(COLUMN, section_number)
+            if section_has_duplicates(col):
+                return False
+        # region
+            region = get_section(REGION, section_number)
+            if section_has_duplicates(region):
+                return False
     return True
-
 
 def find_next_unsolved_cell():
     """
@@ -145,7 +152,6 @@ def find_next_unsolved_cell():
                 return (row_index, col_index)
     
     return (INVALID_INDEX, INVALID_INDEX)
-
 
 def number_is_valid(number_attempted, row_index, col_index):
     """
@@ -168,7 +174,6 @@ def number_is_valid(number_attempted, row_index, col_index):
         return False
 
     return True
-
 
 def solve_sudoku():
     """
@@ -199,7 +204,6 @@ def solve_sudoku():
             # remaining options
             tested_sudoku_board[row_index][col_index] = EMPTY
     return False
-
 
 # Make sure board provided doesn't have invalid numbers
 if not check_board_for_duplicates():
