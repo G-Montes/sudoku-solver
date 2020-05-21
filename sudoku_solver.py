@@ -84,35 +84,27 @@ def get_cell_region(row_index, col_index):
     
     return region_array
 
-def get_board_section(which_section, indexes):
+
+def get_valid_numbers_from_section(section):
     """
-    Returns an array that contains the values in a column, row, or 
-    region from the sudoku board. The first parameter determines
-    the section needed (a row, column, or region) and the index helps
-    identify the location.
+    Returns an array containing valid entries for the passed in section.
+    A section can be either a row, column, or region.
     """
-    row = 0
-    col = 0
+    return numpy.array([value for value in section 
+                        if value != EMPTY])
+
+
+def check_section_for_duplicates(section):
+    """
+    Returns True if the section contains no duplicate values. Returns false
+    otherwise. Invalid entries are removed prior to checking for uniqueness.
+    """
+    valid_section_values = get_valid_numbers_from_section(section)
+    unique_section_values = numpy.unique(valid_section_values)
+
+    if unique_section_values.size < valid_section_values.size:
+        return False
     return True
-
-
-def get_valid_numbers_from_section(row_or_column_to_check, index):
-    """
-    
-    """
-    return True
-
-
-def check_section_for_duplicates():
-    """
-    
-    """
-    for index in range(0, BOARD_SIZE):
-        section = get_valid_numbers_from_section(, index)
-
-
-    return False
-
 
 def check_board_for_duplicates():
     """
