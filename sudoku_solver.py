@@ -1,6 +1,8 @@
 import numpy
 
 BOARD_SIZE = 9
+# TODO REPLACE REGION_SIZE with two variables, REGION_ROW_SIZE and REGION_COL_SIZE
+# This will allow us to work on region sizes that aren't size n x n
 REGION_SIZE = int(numpy.sqrt(BOARD_SIZE))
 EMPTY = 0
 INVALID_INDEX = -1
@@ -36,7 +38,7 @@ def get_initial_sudoku_board(option):
             [0, 9, 0, 6, 2, 5, 0, 8, 1]]
     }[option]
     
-tested_sudoku_board = numpy.array(get_initial_sudoku_board(1))
+tested_sudoku_board = numpy.array(get_initial_sudoku_board(2))
 
 def print_unformatted_board():
     """
@@ -62,10 +64,22 @@ def print_formatted_board():
             else:
                 print(tested_sudoku_board[i][j], end = " ")
 
-def get_region_start_index(index):
-    return (index // REGION_SIZE) * REGION_SIZE
+def get_region_start_index(row_or_col_index):
+    """
+    Returns the start index for a region based on the index provided. 
+    """
+    # TODO Make this work for regions that aren't size n x n
+    # Will need an additional parameter to differentiate between 
+    # a row/col index
+    return (row_or_col_index // REGION_SIZE) * REGION_SIZE
 
 def get_region_end_index(start_index):
+    """
+    Returns the end index of the region based on the start region provided 
+    """
+    # TODO Make this work for regions that aren't size n x n
+    # Will need an additional parameter to differentiate between 
+    # a row/col index
     return start_index + REGION_SIZE - 1
 
 def get_cell_region(row_index, col_index):
@@ -97,12 +111,23 @@ def get_valid_numbers_from_section(section):
                         if value != EMPTY])
 
 def get_section(section_type, section_number):
+    """
+    Returns an array containing a row, column, or region. The parameter section_type
+    indicates whether the function should return a row, column, or region. The parameter
+    section_number indicates which row, col, region it should return. Region numbering
+    follows the left to right, top to bottom convention. 
+    """
     if section_type == ROW:
+        #TODO Consider implications of returning part of the main
+        # sudoku board. Might be better to return a copy of the board
+        # instead. 
         return tested_sudoku_board[section_number, :] 
     elif section_type == COLUMN:
         return tested_sudoku_board[:, section_number]
     else:
         row_index = get_region_start_index(section_number)
+        # TODO Once REGION_SIZE is split into row/column size, replace this usage
+        # of REGION_SIZE with the appropriate variable 
         col_index = (section_number - row_index) * REGION_SIZE
 
         return get_cell_region(row_index, col_index)
