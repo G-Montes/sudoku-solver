@@ -9,7 +9,7 @@ def show_image(image):
     cv.imshow("", image)
     cv.waitKey(0)
 
-def load_img(image_path,use_grayscale = True):
+def load_img(image_path, use_grayscale = True):
     image = cv.imread(sudoku_img_path, 0 if use_grayscale else 1)
     
     if image is None:
@@ -42,12 +42,23 @@ def crop_to_sudoku_border(image):
     
     return image[top_left_corner[0]:num_rows - bottom_right_corner[0], top_left_corner[1]: num_cols - bottom_right_corner[1]]
 
+def find_color_values(image):
+    color_counts= {}
+    for row in sudoku_img:
+        for x in row:
+            color_counts[x] = color_counts.get(x, 0) + 1
+    
+    return color_counts
+
+def print_color_values(color_values):
+    for i in sorted (color_values):
+        print((i, color_values[i]), end=" ")
+
 sudoku_img = load_img(sudoku_img_path)
+
 # sudoku_img_edges = get_edges(THRESHOLD, sudoku_img)
-
 # contours, hierarchy = cv.findContours(sudoku_img, cv.RETR_CCOMP, cv.CHAIN_APPROX_SIMPLE)
-
 # cv.drawContours(sudoku_img, contours, -1, (0, 255, 0), 3)
 
-# show_image(sudoku_img)
+show_image(sudoku_img)
 
