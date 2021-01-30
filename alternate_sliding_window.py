@@ -1,16 +1,20 @@
-import sys
+
 import cv2 as cv
-import numpy
+import numpy as np
+from numpy.core.fromnumeric import resize
+from matplotlib import pyplot as plt
 
-sudoku_img_path = r"C:\\Users/genar/Documents/431.jpg"
-THRESHOLD = 75
+SUDOKU_IMG_PATH = r"C:\\Users/genar/Documents/431.jpg"
+THRESHOLD = 127
+window_name = 0
 
-def show_image(image):
-    cv.imshow("", image)
-    cv.waitKey(0)
+def show_img(image):
+    global window_name
+    cv.imshow(str(window_name), image)
+    window_name +=1
 
 def load_img(image_path, use_grayscale = True):
-    image = cv.imread(sudoku_img_path, 0 if use_grayscale else 1)
+    image = cv.imread(SUDOKU_IMG_PATH, 0 if use_grayscale else 1)
     
     if image is None:
         raise Exception("Something went wrong with the image loading.")
@@ -54,11 +58,31 @@ def print_color_values(color_values):
     for i in sorted (color_values):
         print((i, color_values[i]), end=" ")
 
-sudoku_img = load_img(sudoku_img_path)
+sudoku_img = load_img(SUDOKU_IMG_PATH)
+ret, inv_thresh_img = cv.threshold(sudoku_img, THRESHOLD, 255, cv.THRESH_BINARY_INV)
+inv_img = cv.bitwise_not(inv_thresh_img)
 
-# sudoku_img_edges = get_edges(THRESHOLD, sudoku_img)
-# contours, hierarchy = cv.findContours(sudoku_img, cv.RETR_CCOMP, cv.CHAIN_APPROX_SIMPLE)
-# cv.drawContours(sudoku_img, contours, -1, (0, 255, 0), 3)
+STRUCT_EDGE_SCALE = 10
 
-show_image(sudoku_img)
+# horizontal
+horiz_edges = np.copy(inv_thresh_img)
+horiz_cols = horiz_edges.shape[1]
+horiz_size = horiz_cols // STRUCT_EDGE_SCALE
+horiz_struct = cv.getStructuringElement(cv.MORPH_RECT, (horiz_size, 1))
 
+horiz_edges = cv.erode(horiz_edges, horiz_struct)
+horiz_edges = cv.dilate(horiz_edges, horiz_struct, iterations = 1)
+
+# vertical
+vert_edges = np.copy(inv_thresh_img)
+vert_rows = vert_edges.shape[0]
+vert_size = vert_rows // STRUCT_EDGE_SCALE
+vert_struct = cv.getStructuringElement(cv.MORPH_RECT, (1, vert_size))
+
+vert_edges = cv.erode(vert_edges, vert_struct)
+vert_edges = cv.dilate(vert_edges, vert_struct, iterations = 1)
+
+# combined edges
+edges = horiz_edges + vert_edges
+
+cv.waitKey(0)
