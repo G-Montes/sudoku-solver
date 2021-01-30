@@ -21,15 +21,19 @@ def load_img(image_path, use_grayscale = True):
     else:
         return image
 
-def get_edges(thresh, image):
-    ratio = 3
-    kernel_size = 3 
-    matrix = (3, 3)
-    img_blur = cv.blur(image, matrix)
-    detected_edges = cv.Canny(img_blur, thresh, thresh * ratio, kernel_size)
-    mask = detected_edges != 0
-    edges = sudoku_img * (mask[:,:, None].astype(image.dtype))
-    return edges
+def get_edges(src, should_track_horiz, struct_scale = 10, iter = 1):
+    edges = np.copy(src)
+    lines = edges.shape[should_track_horiz]
+    line_size = lines // struct_scale
+    if should_track_horiz:
+        line_struct  = cv.getStructuringElement(cv.MORPH_RECT, (line_size, 1))
+    else:
+        line_struct  = cv.getStructuringElement(cv.MORPH_RECT, (1, line_size))
+
+    edges = cv.erode(edges,line_struct)
+    edges = cv.dilate(edges,line_struct, iterations = iter)
+
+    return edges    
 
 def find_sudoku_board_corner(image):
     for row_index, row in enumerate(image):
@@ -62,25 +66,11 @@ sudoku_img = load_img(SUDOKU_IMG_PATH)
 ret, inv_thresh_img = cv.threshold(sudoku_img, THRESHOLD, 255, cv.THRESH_BINARY_INV)
 inv_img = cv.bitwise_not(inv_thresh_img)
 
-STRUCT_EDGE_SCALE = 10
-
 # horizontal
-horiz_edges = np.copy(inv_thresh_img)
-horiz_cols = horiz_edges.shape[1]
-horiz_size = horiz_cols // STRUCT_EDGE_SCALE
-horiz_struct = cv.getStructuringElement(cv.MORPH_RECT, (horiz_size, 1))
-
-horiz_edges = cv.erode(horiz_edges, horiz_struct)
-horiz_edges = cv.dilate(horiz_edges, horiz_struct, iterations = 1)
+horiz_edges = get_edges(np.copy(inv_thresh_img), 1)
 
 # vertical
-vert_edges = np.copy(inv_thresh_img)
-vert_rows = vert_edges.shape[0]
-vert_size = vert_rows // STRUCT_EDGE_SCALE
-vert_struct = cv.getStructuringElement(cv.MORPH_RECT, (1, vert_size))
-
-vert_edges = cv.erode(vert_edges, vert_struct)
-vert_edges = cv.dilate(vert_edges, vert_struct, iterations = 1)
+vert_edges = get_edges(np.copy(inv_thresh_img), 0)
 
 # combined edges
 edges = horiz_edges + vert_edges
