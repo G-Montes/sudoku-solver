@@ -21,10 +21,11 @@ def load_img(image_path, use_grayscale = True):
     else:
         return image
 
-def get_edges(src, should_track_horiz, struct_scale = 10, iter = 1):
+def get_edges(src, should_track_horiz, struct_scale = 15, iter = 1):
     edges = np.copy(src)
-    lines = edges.shape[should_track_horiz]
-    line_size = lines // struct_scale
+    img_size = edges.shape[should_track_horiz]
+    line_size = img_size // struct_scale
+
     if should_track_horiz:
         line_struct  = cv.getStructuringElement(cv.MORPH_RECT, (line_size, 1))
     else:
@@ -37,18 +38,18 @@ def get_edges(src, should_track_horiz, struct_scale = 10, iter = 1):
 
 def find_sudoku_board_corner(image):
     for row_index, row in enumerate(image):
-        if numpy.any(row):
+        if np.any(row):
             for col_index, element in enumerate(row):
                 if element != 0:
                     return (row_index, col_index)
 
-def crop_to_sudoku_border(image):
-    num_rows, num_cols = image.shape
-    top_left_corner =  find_sudoku_board_corner(image)
-    reversed_img = image[::-1,::-1]
+def crop_to_sudoku_border(edges_img, img_to_crop):
+    num_rows, num_cols = edges_img.shape
+    top_left_corner =  find_sudoku_board_corner(edges_img)
+    reversed_img = edges_img[::-1,::-1]
     bottom_right_corner = find_sudoku_board_corner(reversed_img)
     
-    return image[top_left_corner[0]:num_rows - bottom_right_corner[0], top_left_corner[1]: num_cols - bottom_right_corner[1]]
+    return img_to_crop[top_left_corner[0]:num_rows - bottom_right_corner[0], top_left_corner[1]: num_cols - bottom_right_corner[1]]
 
 def find_color_values(image):
     color_counts= {}
@@ -62,17 +63,19 @@ def print_color_values(color_values):
     for i in sorted (color_values):
         print((i, color_values[i]), end=" ")
 
+# Load and prep image for edge detection
 sudoku_img = load_img(SUDOKU_IMG_PATH)
 ret, inv_thresh_img = cv.threshold(sudoku_img, THRESHOLD, 255, cv.THRESH_BINARY_INV)
 inv_img = cv.bitwise_not(inv_thresh_img)
 
-# horizontal
+# Edge Finding process
 horiz_edges = get_edges(np.copy(inv_thresh_img), 1)
-
-# vertical
 vert_edges = get_edges(np.copy(inv_thresh_img), 0)
-
-# combined edges
 edges = horiz_edges + vert_edges
 
+sudoku_img = inv_img + edges
+
+sudoku_img = crop_to_sudoku_border(edges, sudoku_img)
+
+show_img(sudoku_img)
 cv.waitKey(0)
