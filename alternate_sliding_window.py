@@ -5,7 +5,6 @@ from numpy.core.fromnumeric import resize
 from matplotlib import pyplot as plt
 
 SUDOKU_IMG_PATH = r"C:\\Users/genar/Documents/431.jpg"
-THRESHOLD = 160
 window_name = 0
 
 def show_img(image):
@@ -65,7 +64,7 @@ def print_color_values(color_values):
 
 # Load and prep image for edge detection
 sudoku_img = load_img(SUDOKU_IMG_PATH)
-ret, inv_thresh_img = cv.threshold(sudoku_img, THRESHOLD, 255, cv.THRESH_BINARY_INV)
+ret, inv_thresh_img = cv.threshold(sudoku_img, 0, 255, cv.THRESH_BINARY_INV + cv.THRESH_OTSU)
 inv_img = cv.bitwise_not(inv_thresh_img)
 
 # Edge Finding process
@@ -79,6 +78,6 @@ sudoku_img = inv_img + edges
 # Will crop to sudoku board removing extra space
 sudoku_img = crop_to_sudoku_border(edges, sudoku_img)
 
-show_img(inv_img)
+show_img(edges)
 show_img(sudoku_img)
 cv.waitKey(0)
