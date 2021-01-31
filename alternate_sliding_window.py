@@ -5,7 +5,7 @@ from numpy.core.fromnumeric import resize
 from matplotlib import pyplot as plt
 
 SUDOKU_IMG_PATH = r"C:\\Users/genar/Documents/431.jpg"
-THRESHOLD = 127
+THRESHOLD = 160
 window_name = 0
 
 def show_img(image):
@@ -73,9 +73,12 @@ horiz_edges = get_edges(np.copy(inv_thresh_img), 1)
 vert_edges = get_edges(np.copy(inv_thresh_img), 0)
 edges = horiz_edges + vert_edges
 
+# Edges detected are removed
 sudoku_img = inv_img + edges
 
+# Will crop to sudoku board removing extra space
 sudoku_img = crop_to_sudoku_border(edges, sudoku_img)
 
+show_img(inv_img)
 show_img(sudoku_img)
 cv.waitKey(0)
