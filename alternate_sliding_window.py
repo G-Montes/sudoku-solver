@@ -1,12 +1,13 @@
 
 import cv2 as cv
+import math
 import numpy as np
 from numpy.core.fromnumeric import resize
 from matplotlib import pyplot as plt
 from pathlib import Path
 
-SUDOKU_IMG_PATH = Path("Sudoku_Images/Unsolved/431.jpg").__str__()
-
+SUDOKU_IMG_PATH = Path("Sudoku_Images/Unsolved/431l.jpg").__str__()
+MIN_DIMENSION = 300
 window_name = 0
 
 def show_img(image):
@@ -22,7 +23,7 @@ def load_img(image_path, use_grayscale = True):
     else:
         return image
 
-def get_edges(src, should_track_horiz, struct_scale = 15, iter = 1):
+def get_edges(src, should_track_horiz, struct_scale = 10, iter = 1):
     edges = np.copy(src)
     img_size = edges.shape[should_track_horiz]
     line_size = img_size // struct_scale
@@ -66,6 +67,13 @@ def print_color_values(color_values):
 
 # Load and prep image for edge detection
 sudoku_img = load_img(SUDOKU_IMG_PATH)
+
+smallest_dim = sudoku_img.shape[0] if sudoku_img.shape[0] < sudoku_img.shape[1] else sudoku_img.shape[1]
+
+if smallest_dim < MIN_DIMENSION:
+    scale = math.ceil(MIN_DIMENSION / smallest_dim)
+    sudoku_img = cv.resize(sudoku_img, (0,0), fx = scale, fy = scale)
+
 ret, inv_thresh_img = cv.threshold(sudoku_img, 0, 255, cv.THRESH_BINARY_INV + cv.THRESH_OTSU)
 inv_img = cv.bitwise_not(inv_thresh_img)
 
@@ -80,7 +88,7 @@ sudoku_img = inv_img + edges
 # Will crop to sudoku board removing extra space
 sudoku_img = crop_to_sudoku_border(edges, sudoku_img)
 
-# show_img(edges)
-# show_img(sudoku_img)
-print(SUDOKU_IMG_PATH)
-# cv.waitKey(0)
+show_img(inv_thresh_img)
+show_img(edges)
+show_img(sudoku_img)
+cv.waitKey(0)
