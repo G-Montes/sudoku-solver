@@ -3,8 +3,10 @@ import cv2 as cv
 import numpy as np
 from numpy.core.fromnumeric import resize
 from matplotlib import pyplot as plt
+from pathlib import Path
 
-SUDOKU_IMG_PATH = r"C:\\Users/genar/Documents/431.jpg"
+SUDOKU_IMG_PATH = Path("Sudoku_Images/Unsolved/431.jpg").__str__()
+
 window_name = 0
 
 def show_img(image):
@@ -78,6 +80,7 @@ sudoku_img = inv_img + edges
 # Will crop to sudoku board removing extra space
 sudoku_img = crop_to_sudoku_border(edges, sudoku_img)
 
-show_img(edges)
-show_img(sudoku_img)
-cv.waitKey(0)
+# show_img(edges)
+# show_img(sudoku_img)
+print(SUDOKU_IMG_PATH)
+# cv.waitKey(0)
