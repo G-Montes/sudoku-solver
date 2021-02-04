@@ -61,10 +61,6 @@ def find_color_values(image):
     
     return color_counts
 
-def print_color_values(color_values):
-    for i in sorted (color_values):
-        print((i, color_values[i]), end=" ")
-
 # Load and prep image for edge detection
 sudoku_img = load_img(SUDOKU_IMG_PATH)
 
