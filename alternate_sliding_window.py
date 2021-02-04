@@ -64,7 +64,7 @@ def find_color_values(image):
 # Load and prep image for edge detection
 sudoku_img = load_img(SUDOKU_IMG_PATH)
 
-smallest_dim = sudoku_img.shape[0] if sudoku_img.shape[0] < sudoku_img.shape[1] else sudoku_img.shape[1]
+smallest_dim = min(sudoku_img.shape)
 
 if smallest_dim < MIN_DIMENSION:
     scale = math.ceil(MIN_DIMENSION / smallest_dim)
