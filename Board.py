@@ -5,9 +5,9 @@ class Board:
     EMPTY = 0
     INVALID_INDEX = -1
     SECTION = {
-        ROW: "row",
-        COL: "column",
-        REGION: "region",
+        "ROW": "row",
+        "COL": "column",
+        "REGION": "region",
     }
 
     grid_size: int
@@ -69,11 +69,11 @@ class Board:
         is in are considered valid sections.
         """
 
-        if not self.is_valid_section(get_section(self.SECTION[ROW])):
+        if not self.is_valid_section(get_section(self.SECTION["ROW"])):
             return False
-        elif not self.is_valid_section(get_section(self.SECTION[COLUMN])):
+        elif not self.is_valid_section(get_section(self.SECTION["COL"])):
             return False
-        elif not self.is_valid_section(get_section(self.SECTION[REGION])):
+        elif not self.is_valid_section(get_section(self.SECTION["REGION"])):
             return False
 
         return True
