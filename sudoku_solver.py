@@ -1,50 +1,10 @@
 import numpy
 
-BOARD_SIZE = 9
-# TODO REPLACE REGION_SIZE with two variables, REGION_ROW_SIZE and REGION_COL_SIZE
-# This will allow us to work on region sizes that aren't size n x n
-REGION_SIZE = int(numpy.sqrt(BOARD_SIZE))
-EMPTY = 0
-INVALID_INDEX = -1
-COLUMN = 0
-ROW = 1
-REGION = 2
-
-def get_initial_sudoku_board(option):
-    """
-    Returns a list that contains the initial sudoku
-    board state. The board returned depends on which
-    option (an int) was passed in. 
-    """
-    return{
-        1: [[6, 5, 0, 8, 7, 3, 0, 9, 0],
-            [0, 0, 3, 2, 5, 0, 0, 0, 8],
-            [9, 8, 0, 1, 0, 4, 3, 5, 7],
-            [1, 0, 5, 0, 0, 0, 0, 0, 0],
-            [4, 0, 0, 0, 0, 0, 0, 0, 2],
-            [0, 0, 0, 0, 0, 0, 5, 0, 3],
-            [5, 7, 8, 3, 0, 1, 0, 2, 6],
-            [2, 0, 0, 0, 4, 8, 9, 0, 0],
-            [0, 9, 0, 6, 2, 5, 0, 8, 1]],
-
-        2: [[6, 5, 0, 8, 7, 3, 0, 9, 0],
-            [0, 6, 3, 2, 5, 0, 0, 0, 8],
-            [9, 8, 0, 1, 0, 4, 3, 5, 7],
-            [1, 0, 5, 0, 0, 0, 0, 0, 0],
-            [4, 0, 0, 0, 0, 0, 0, 0, 2],
-            [0, 0, 0, 0, 0, 0, 5, 0, 3],
-            [5, 7, 8, 3, 0, 1, 0, 2, 6],
-            [2, 0, 0, 0, 4, 8, 9, 0, 0],
-            [0, 9, 0, 6, 2, 5, 0, 8, 1]]
-    }[option]
-    
-tested_sudoku_board = numpy.array(get_initial_sudoku_board(2))
-
-def print_unformatted_board():
+def print_unformatted_board(board) -> None:
     """
     Prints the board. Every row is on its own line.
     """
-    for row in tested_sudoku_board:
+    for row in board:
         print(row)
 
 def print_formatted_board():
