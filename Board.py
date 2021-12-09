@@ -52,16 +52,21 @@ class Board:
         else:
             pass
 
-    def is_valid_section(section: List[int]) -> bool:
+    def is_valid_section(section: List[int], check_complete: bool = False) -> bool:
         """
-        Returns True if the list contains all unique natural numbers.
+        Returns True if the list contains unique natural numbers. Optional paramater
+        that can be passed to check whether section contains ONLY unique natural numbers.
         """
         invalid_list = []
+
+        # Allows this function to check if section is complete instead
+        if check_complete:
+            invalid_list.append(0)
 
         for x in section:
             if x in invalid_list:
                 return False
-            else:
+            elif x != 0:
                 invalid_list.append(x)
 
         return True
