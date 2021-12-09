@@ -5,9 +5,9 @@ class Board:
     EMPTY = 0
     INVALID_INDEX = -1
     SECTION = {
-        ROW: 0,
-        COL: 1,
-        REGION: 2,
+        ROW: "row",
+        COL: "column",
+        REGION: "region",
     }
 
     grid_size: int
@@ -42,6 +42,12 @@ class Board:
             return (i, x_val)
 
         return self.INVALID_INDEX
+
+    def get_section(self, section_type) -> List[int]:
+        if section_type == self.SECTION[ROW]:
+            pass
+        elif section_type == self.SECTION[COL]:
+            pass
 
     def is_valid_section(section: List[int]) -> bool:
         """
