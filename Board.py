@@ -5,9 +5,9 @@ class Board:
     EMPTY = 0
     INVALID_INDEX = -1
     SECTION = {
-        "ROW": "row",
-        "COL": "column",
-        "REGION": "region",
+        "ROW": 0,
+        "COL": 1,
+        "REGION": 2,
     }
 
     grid_size: int
@@ -44,12 +44,15 @@ class Board:
         return self.INVALID_INDEX
 
     def get_section(self, section_type) -> List[int]:
-        if section_type == self.SECTION[ROW]:
+        # TODO: Implement logic to get section for each type
+        if section_type == self.SECTION["ROW"]:
             pass
-        elif section_type == self.SECTION[COL]:
+        elif section_type == self.SECTION["COL"]:
+            pass
+        else:
             pass
 
-    def is_valid_section(section: List[int]) -> bool:
+    def is_valid_section(coord: tuple(int), section: List[int]) -> bool:
         """
         Returns True if the list contains all unique natural numbers.
         """
@@ -69,11 +72,11 @@ class Board:
         is in are considered valid sections.
         """
 
-        if not self.is_valid_section(get_section(self.SECTION["ROW"])):
+        if not self.is_valid_section(get_section(coord, self.SECTION["ROW"])):
             return False
-        elif not self.is_valid_section(get_section(self.SECTION["COL"])):
+        elif not self.is_valid_section(get_section(coord, self.SECTION["COL"])):
             return False
-        elif not self.is_valid_section(get_section(self.SECTION["REGION"])):
+        elif not self.is_valid_section(get_section(coord, self.SECTION["REGION"])):
             return False
 
         return True
