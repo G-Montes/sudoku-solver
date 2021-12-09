@@ -43,7 +43,7 @@ class Board:
 
         return self.INVALID_INDEX
 
-    def get_section(self, section_type) -> List[int]:
+    def get_section(self, coord: tuple(int), section_type) -> List[int]:
         # TODO: Implement logic to get section for each type
         if section_type == self.SECTION["ROW"]:
             pass
@@ -52,7 +52,7 @@ class Board:
         else:
             pass
 
-    def is_valid_section(coord: tuple(int), section: List[int]) -> bool:
+    def is_valid_section(section: List[int]) -> bool:
         """
         Returns True if the list contains all unique natural numbers.
         """
