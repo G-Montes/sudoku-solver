@@ -46,11 +46,28 @@ class Board:
     def get_section(self, coord: tuple(int), section_type) -> List[int]:
         # TODO: Implement logic to get section for each type
         if section_type == self.SECTION["ROW"]:
-            pass
+            return self.board[coord[0]]
         elif section_type == self.SECTION["COL"]:
-            pass
+            return self.board[coord[1]]
         else:
-            pass
+            section = []
+            # Finds the starting (top left) indexes for the region coordinates are in
+            region_start_row_coord = (
+                coord[0] // self.region_row_size
+            ) * self.region_row_size
+            region_start_col_coord = (
+                coord[1] // self.region_col_size
+            ) * self.region_col_size
+
+            for i in range(
+                region_start_row_coord, region_start_row_coord + self.region_row_size
+            ):
+                for j in range(
+                    region_start_col_coord, region_start_col_coord, self.region_col_size
+                ):
+                    section.append(self.board[i][j])
+
+            return section
 
     def is_valid_section(section: List[int], check_complete: bool = False) -> bool:
         """
