@@ -13,7 +13,7 @@ class Board:
     grid_size: int
     region_row_size: int
     region_col_size: int
-    board: List[[int]]
+    board: List[List[int]]
 
     def __init__(self, board: List[[int]], region_row_size: int, region_col_size: int):
         self.grid_size = board.length()
