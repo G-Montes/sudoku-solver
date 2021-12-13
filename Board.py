@@ -48,7 +48,12 @@ class Board:
         if section_type == self.SECTION["ROW"]:
             return self.board[coord[0]]
         elif section_type == self.SECTION["COL"]:
-            return self.board[coord[1]]
+            section = []
+
+            for row in self.board:
+                section.append(row[coord[1]])
+
+            return section
         else:
             section = []
             # Finds the starting (top left) indexes for the region coordinates are in
