@@ -107,3 +107,25 @@ class Board:
             return False
 
         return True
+
+    def solve_sudoku(self) -> bool:
+        """
+        Returns True if a solution has been found. Returns false otherwise.
+        Implements a recursive brute force algorithm.
+
+        Assigns a valid number to the next empty cell. Repeats until board complete.
+        If no valid number possible for a cell, goes back to previous filled-in cell
+        and tries a different valid number, repeats as necessary.
+        """
+        empty_cell = self.find_next_unsolved_cell()
+        if empty_cell[0] == self.INVALID_INDEX:
+            return True
+
+        for i in range(1, self.grid_size + 1):
+            self.board[empty_cell[0]][empty_cell[1]] = i
+
+            if is_coord_valid(empty_cell) and self.solve_sudoku():
+                return True
+            self.board[empty_cell[0]][empty_cell[1]] = self.EMPTY
+
+        return False
