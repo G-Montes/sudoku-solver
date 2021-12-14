@@ -1,4 +1,5 @@
 from typing import List
+from typing import Tuple
 
 
 class Board:
@@ -18,7 +19,7 @@ class Board:
     def __init__(
         self, board: List[List[int]], region_row_size: int, region_col_size: int
     ):
-        self.grid_size = board.length()
+        self.grid_size = len(board[0])
         self.region_row_size = region_row_size
         self.region_col_size = region_col_size
         self.board = board
@@ -30,7 +31,7 @@ class Board:
         for row in self.board:
             print(row)
 
-    def find_next_unsolved_cell(self) -> tuple(int):
+    def find_next_unsolved_cell(self) -> Tuple[int, int]:
         """
         Returns a tuple containing the coordinates of the next EMPTY value.
         Otherwise, it returns a tuple containing INVALID_INDEX
@@ -43,19 +44,14 @@ class Board:
 
             return (i, x_val)
 
-        return self.INVALID_INDEX
+        return (self.INVALID_INDEX, self.INVALID_INDEX)
 
-    def get_section(self, coord: tuple(int), section_type) -> List[int]:
+    def get_section(self, coord: Tuple[int, int], section_type) -> List[int]:
         # TODO: Implement logic to get section for each type
         if section_type == self.SECTION["ROW"]:
-            return self.board[coord[0]]
+            return self.board[coord[0]][:]
         elif section_type == self.SECTION["COL"]:
-            section = []
-
-            for row in self.board:
-                section.append(row[coord[1]])
-
-            return section
+            return list(self.board[:][coord[1]])
         else:
             section = []
             # Finds the starting (top left) indexes for the region coordinates are in
@@ -76,18 +72,18 @@ class Board:
 
             return section
 
-    def is_valid_section(section: List[int], check_complete: bool = False) -> bool:
+    def is_valid_section(
+        board_section: List[int], check_complete: bool = False
+    ) -> bool:
         """
         Returns True if the list contains unique natural numbers. Optional paramater
         that can be passed to check whether section contains ONLY unique natural numbers.
         """
         invalid_list = []
-
         # Allows this function to check if section is complete instead
         if check_complete:
             invalid_list.append(0)
-
-        for x in section:
+        for x in board_section:
             if x in invalid_list:
                 return False
             elif x != 0:
@@ -95,17 +91,16 @@ class Board:
 
         return True
 
-    def is_coord_valid(self, coord: tuple(int)) -> bool:
+    def is_coord_valid(self, coord: Tuple[int, int]) -> bool:
         """
         Returns True if the column, row, and region that the coordinate
         is in are considered valid sections.
         """
-
-        if not self.is_valid_section(get_section(coord, self.SECTION["ROW"])):
+        if not self.is_valid_section(self.get_section(coord, self.SECTION["ROW"])):
             return False
-        elif not self.is_valid_section(get_section(coord, self.SECTION["COL"])):
+        elif not self.is_valid_section(self.get_section(coord, self.SECTION["COL"])):
             return False
-        elif not self.is_valid_section(get_section(coord, self.SECTION["REGION"])):
+        elif not self.is_valid_section(self.get_section(coord, self.SECTION["REGION"])):
             return False
 
         return True
@@ -126,7 +121,7 @@ class Board:
         for i in range(1, self.grid_size + 1):
             self.board[empty_cell[0]][empty_cell[1]] = i
 
-            if is_coord_valid(empty_cell) and self.solve_sudoku():
+            if self.is_coord_valid(empty_cell) and self.solve_sudoku():
                 return True
             self.board[empty_cell[0]][empty_cell[1]] = self.EMPTY
 
