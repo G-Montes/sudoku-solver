@@ -31,7 +31,7 @@ class Board:
         for row in self.board:
             print(row)
 
-    def find_next_unsolved_cell(self) -> Tuple[int, int]:
+    def find_next_unsolved_cell(self) -> tuple[int, int]:
         """
         Returns a tuple containing the coordinates of the next EMPTY value.
         Otherwise, it returns a tuple containing INVALID_INDEX
@@ -40,18 +40,20 @@ class Board:
             try:
                 x_val = row.index(self.EMPTY)
             except ValueError:
-                pass
+                continue
 
             return (i, x_val)
 
         return (self.INVALID_INDEX, self.INVALID_INDEX)
 
-    def get_section(self, coord: Tuple[int, int], section_type) -> List[int]:
-        # TODO: Implement logic to get section for each type
+    def get_section(self, coord: tuple[int, int], section_type) -> List[int]:
         if section_type == self.SECTION["ROW"]:
             return self.board[coord[0]][:]
         elif section_type == self.SECTION["COL"]:
-            return list(self.board[:][coord[1]])
+            section = []
+            for row in self.board:
+                section.append(row[coord[1]])
+            return section
         else:
             section = []
             # Finds the starting (top left) indexes for the region coordinates are in
@@ -73,17 +75,18 @@ class Board:
             return section
 
     def is_valid_section(
-        board_section: List[int], check_complete: bool = False
+        self, coord: tuple[int, int], section_type, check_complete: bool = False
     ) -> bool:
         """
         Returns True if the list contains unique natural numbers. Optional paramater
         that can be passed to check whether section contains ONLY unique natural numbers.
         """
+        section = self.get_section(coord, section_type)
         invalid_list = []
         # Allows this function to check if section is complete instead
         if check_complete:
             invalid_list.append(0)
-        for x in board_section:
+        for x in section:
             if x in invalid_list:
                 return False
             elif x != 0:
@@ -91,16 +94,16 @@ class Board:
 
         return True
 
-    def is_coord_valid(self, coord: Tuple[int, int]) -> bool:
+    def is_coord_valid(self, coord: tuple[int, int]) -> bool:
         """
         Returns True if the column, row, and region that the coordinate
         is in are considered valid sections.
         """
-        if not self.is_valid_section(self.get_section(coord, self.SECTION["ROW"])):
+        if not self.is_valid_section(coord, self.SECTION["ROW"]):
             return False
-        elif not self.is_valid_section(self.get_section(coord, self.SECTION["COL"])):
+        elif not self.is_valid_section(coord, self.SECTION["COL"]):
             return False
-        elif not self.is_valid_section(self.get_section(coord, self.SECTION["REGION"])):
+        elif not self.is_valid_section(coord, self.SECTION["REGION"]):
             return False
 
         return True

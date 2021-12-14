@@ -17,4 +17,5 @@ sudoku_board = Board.Board(
 )
 
 sudoku_board.solve_sudoku()
+print()
 sudoku_board.print_unformatted_board()
