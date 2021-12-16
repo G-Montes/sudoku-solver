@@ -15,7 +15,17 @@ sudoku_board = Board.Board(
     3,
     3,
 )
-
-sudoku_board.solve_sudoku()
-print()
-sudoku_board.print_unformatted_board()
+sudoku_board_small = Board.Board(
+    [
+        [0, 6, 0, 0, 5, 0],
+        [0, 0, 0, 0, 0, 1],
+        [0, 0, 4, 6, 0, 5],
+        [5, 0, 6, 2, 0, 0],
+        [6, 0, 0, 0, 0, 0],
+        [0, 1, 0, 0, 2, 0],
+    ],
+    2,
+    3,
+)
+print(sudoku_board_small.solve_sudoku())
+sudoku_board_small.print_unformatted_board()
