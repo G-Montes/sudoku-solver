@@ -63,12 +63,12 @@ class Board:
             region_start_col_coord = (
                 coord[1] // self.region_col_size
             ) * self.region_col_size
-
             for i in range(
                 region_start_row_coord, region_start_row_coord + self.region_row_size
             ):
                 for j in range(
-                    region_start_col_coord, region_start_col_coord, self.region_col_size
+                    region_start_col_coord,
+                    region_start_col_coord + self.region_col_size,
                 ):
                     section.append(self.board[i][j])
 
@@ -105,7 +105,6 @@ class Board:
             return False
         elif not self.is_valid_section(coord, self.SECTION["REGION"]):
             return False
-
         return True
 
     def solve_sudoku(self) -> bool:
