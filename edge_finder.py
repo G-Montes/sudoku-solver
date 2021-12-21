@@ -1,13 +1,8 @@
-import sys
+from sudoku_utils import get_image_path
 import cv2 as cv
 import numpy
-import os
 
-cwd = os.getcwd()
-image_folder = "/unsolved-images/"
-file_name = "unsolved_1.png"
-sudoku_img_path = cwd + image_folder + file_name
-
+sudoku_img_path = get_image_path("unsolved_1.png", False)
 THRESHOLD = 75
 
 
