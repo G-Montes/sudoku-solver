@@ -1,7 +1,7 @@
 from sudoku_utils import get_image_path
 
 import numpy as np
-import cv2 as cv
+import cv2 as cv  # type: ignore
 
 img_path = get_image_path("unsolved_1.png", use_solved_folder=False)
 

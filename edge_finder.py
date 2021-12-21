@@ -1,5 +1,5 @@
 from sudoku_utils import get_image_path
-import cv2 as cv
+import cv2 as cv  # type: ignore
 import numpy as np
 import numpy.typing as npt
 
@@ -7,8 +7,8 @@ sudoku_img_path = get_image_path("unsolved_1.png", use_solved_folder=False)
 THRESHOLD = 75
 
 
-def show_image(img_path: str, name: str = "") -> None:
-    cv.imshow(name, img_path)
+def show_image(img: npt.NDArray, name: str = "") -> None:
+    cv.imshow(name, img)
 
 
 def load_img(image_path: str) -> npt.NDArray:
@@ -34,6 +34,8 @@ def find_sudoku_board_corner(image: npt.NDArray) -> tuple[int, int]:
     for row_index, row in enumerate(image):
         if np.any(row) and np.mean([x if x == 0 else 1 for x in row]) > 0.6:
             return (row_index, np.where(row != 0)[0][0])
+
+    return (0, 0)  # No suitable corner found
 
 
 def crop_to_sudoku_border(image: npt.NDArray) -> npt.NDArray:
