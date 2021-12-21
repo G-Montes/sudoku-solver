@@ -2,7 +2,7 @@ from sudoku_utils import get_image_path
 import cv2 as cv
 import numpy
 
-sudoku_img_path = get_image_path("unsolved_1.png", False)
+sudoku_img_path = get_image_path("unsolved_1.png", use_solved_folder=False)
 THRESHOLD = 75
 
 
