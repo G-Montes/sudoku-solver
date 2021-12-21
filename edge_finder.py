@@ -34,12 +34,8 @@ def get_edges(thresh):
 
 def find_sudoku_board_corner(image):
     for row_index, row in enumerate(image):
-        print(numpy.mean([x if x == 0 else 1 for x in row]))
-        if numpy.any(row) and numpy.mean([x if x == 0 else 1 for x in row]) > 0.5:
-            for col_index, element in enumerate(row):
-                if element != 0:
-                    print(row_index, col_index)
-                    return (row_index, col_index)
+        if numpy.any(row) and numpy.mean([x if x == 0 else 1 for x in row]) > 0.6:
+            return (row_index, numpy.where(row != 0)[0][0])
 
 
 def crop_to_sudoku_border(image):
