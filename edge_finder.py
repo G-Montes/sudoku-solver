@@ -11,10 +11,7 @@ def find_edges(
     matrix: tuple[int, int],
 ) -> npt.NDArray:
     img_blur = cv.blur(image, matrix)
-    detected_edges = cv.Canny(img_blur, thresh, thresh * ratio, kernel_size)
-    mask = detected_edges != 0
-    edges = image * (mask[:, :, None].astype(image.dtype))
-    return edges
+    return cv.Canny(img_blur, thresh, thresh * ratio, kernel_size)
 
 
 def find_sudoku_board_corner(image: npt.NDArray) -> tuple[int, int]:
@@ -44,7 +41,7 @@ def get_image_edges(
     matrix: tuple[int, int] = (3, 3),
 ) -> npt.NDArray:
     grayscale_img = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
-    img_edges = find_edges(grayscale_img, thresh, ratio, kernel_size, matrix)
+    img_edges = find_edges(image, thresh, ratio, kernel_size, matrix)
 
     # Returns a 2D array
-    return img_edges[:, :, 0]
+    return img_edges
