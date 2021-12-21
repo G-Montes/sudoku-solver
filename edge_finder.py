@@ -1,10 +1,14 @@
 import sys
 import cv2 as cv
 import numpy
+import os
 
-sudoku_img_path = (
-    r"C:\Users\genard.montes\Repo\sudoku-solver\unsolved-images\unsolved_1.png"
-)
+cwd = os.getcwd()
+print(cwd)
+image_folder = "/unsolved-images/"
+file_name = "unsolved_1.png"
+sudoku_img_path = cwd + image_folder + file_name
+
 THRESHOLD = 75
 
 
@@ -54,7 +58,5 @@ sudoku_img = load_img(sudoku_img_path)
 sudoku_img_gray = cv.cvtColor(sudoku_img, cv.COLOR_BGR2GRAY)
 sudoku_img_edges = get_edges(THRESHOLD)
 altered = sudoku_img_edges[:, :, 0]
-show_image(altered)
 cropped_image = crop_to_sudoku_border(altered)
-print(cropped_image.shape)
 show_image(cropped_image)
