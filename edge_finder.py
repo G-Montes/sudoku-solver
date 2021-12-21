@@ -1,4 +1,3 @@
-from sudoku_utils import get_image_path
 import cv2 as cv  # type: ignore
 import numpy as np
 import numpy.typing as npt
