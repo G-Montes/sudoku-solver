@@ -19,7 +19,7 @@ def load_img(image_path: str) -> npt.NDArray:
         return image
 
 
-def get_edges(image: npt.NDArray, thresh: int = THRESHOLD) -> npt.NDArray:
+def find_edges(image: npt.NDArray, thresh: int = THRESHOLD) -> npt.NDArray:
     ratio = 3
     kernel_size = 3
     matrix = (3, 3)
@@ -49,10 +49,10 @@ def crop_to_sudoku_border(image: npt.NDArray) -> npt.NDArray:
     ]
 
 
-sudoku_img = load_img(sudoku_img_path)
-sudoku_img_gray = cv.cvtColor(sudoku_img, cv.COLOR_BGR2GRAY)
-sudoku_img_edges = get_edges(sudoku_img_gray)
-altered = sudoku_img_edges[:, :, 0]
-show_image(sudoku_img_edges, name="original")
-show_image(altered, name="altered")
-cv.waitKey(0)
+def get_image_edges(image_path: str) -> npt.NDArray:
+    sudoku_img = load_img(image_path)
+    sudoku_img_gray = cv.cvtColor(sudoku_img, cv.COLOR_BGR2GRAY)
+    sudoku_img_edges = find_edges(sudoku_img_gray)
+
+    # Returns a 2D array
+    return sudoku_img_edges[:, :, 0]
