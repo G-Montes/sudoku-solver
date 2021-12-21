@@ -11,9 +11,9 @@ gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
 gray = np.float32(gray)
 dst = cv.cornerHarris(gray, 2, 1, 0.04)
 
-# dst = cv.dilate(dst, None)
+dst = cv.dilate(dst, None)
 
-# img[dst > 0.01 * dst.max()] = [0, 0, 255]
+img[dst > 0.01 * dst.max()] = [0, 0, 255]
 
 cv.imshow(".git", img)
 cv.waitKey(0)
