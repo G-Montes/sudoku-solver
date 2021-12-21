@@ -4,18 +4,6 @@ import numpy as np
 import numpy.typing as npt
 
 
-def show_image(img: npt.NDArray, name: str = "") -> None:
-    cv.imshow(name, img)
-
-
-def load_img(image_path: str) -> npt.NDArray:
-    image = cv.imread(sudoku_img_path)
-    if image is None:
-        raise Exception("Something went wrong with the image loading.")
-    else:
-        return image
-
-
 def find_edges(
     image: npt.NDArray,
     thresh: int,
@@ -26,7 +14,7 @@ def find_edges(
     img_blur = cv.blur(image, matrix)
     detected_edges = cv.Canny(img_blur, thresh, thresh * ratio, kernel_size)
     mask = detected_edges != 0
-    edges = sudoku_img * (mask[:, :, None].astype(sudoku_img.dtype))
+    edges = image * (mask[:, :, None].astype(image.dtype))
     return edges
 
 
@@ -50,15 +38,14 @@ def crop_to_sudoku_border(image: npt.NDArray) -> npt.NDArray:
 
 
 def get_image_edges(
-    image_path: str,
+    image: npt.NDArray,
     thresh=75,
     ratio: int = 3,
     kernel_size: int = 3,
     matrix: tuple[int, int] = (3, 3),
 ) -> npt.NDArray:
-    sudoku_img = load_img(image_path)
-    sudoku_img_gray = cv.cvtColor(sudoku_img, cv.COLOR_BGR2GRAY)
-    sudoku_img_edges = find_edges(sudoku_img_gray, thresh, ratio, kernel_size, matrix)
+    grayscale_img = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
+    img_edges = find_edges(grayscale_img, thresh, ratio, kernel_size, matrix)
 
     # Returns a 2D array
-    return sudoku_img_edges[:, :, 0]
+    return img_edges[:, :, 0]
