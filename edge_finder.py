@@ -12,9 +12,8 @@ sudoku_img_path = cwd + image_folder + file_name
 THRESHOLD = 75
 
 
-def show_image(image):
-    cv.imshow("", image)
-    cv.waitKey(0)
+def show_image(image, name=""):
+    cv.imshow(name, image)
 
 
 def load_img(image_path):
@@ -58,5 +57,6 @@ sudoku_img = load_img(sudoku_img_path)
 sudoku_img_gray = cv.cvtColor(sudoku_img, cv.COLOR_BGR2GRAY)
 sudoku_img_edges = get_edges(THRESHOLD)
 altered = sudoku_img_edges[:, :, 0]
-cropped_image = crop_to_sudoku_border(altered)
-show_image(cropped_image)
+show_image(sudoku_img_edges, name="original")
+show_image(altered, name="altered")
+cv.waitKey(0)
