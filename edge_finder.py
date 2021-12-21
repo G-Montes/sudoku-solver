@@ -1,16 +1,17 @@
 from sudoku_utils import get_image_path
 import cv2 as cv
-import numpy
+import numpy as np
+import numpy.typing as npt
 
 sudoku_img_path = get_image_path("unsolved_1.png", use_solved_folder=False)
 THRESHOLD = 75
 
 
-def show_image(image, name=""):
-    cv.imshow(name, image)
+def show_image(img_path: str, name: str = "") -> None:
+    cv.imshow(name, img_path)
 
 
-def load_img(image_path):
+def load_img(image_path: str) -> npt.NDArray:
     image = cv.imread(sudoku_img_path)
     if image is None:
         raise Exception("Something went wrong with the image loading.")
@@ -18,7 +19,7 @@ def load_img(image_path):
         return image
 
 
-def get_edges(image, thresh=THRESHOLD):
+def get_edges(image: npt.NDArray, thresh: int = THRESHOLD) -> npt.NDArray:
     ratio = 3
     kernel_size = 3
     matrix = (3, 3)
@@ -29,18 +30,17 @@ def get_edges(image, thresh=THRESHOLD):
     return edges
 
 
-def find_sudoku_board_corner(image):
+def find_sudoku_board_corner(image: npt.NDArray) -> tuple[int, int]:
     for row_index, row in enumerate(image):
-        if numpy.any(row) and numpy.mean([x if x == 0 else 1 for x in row]) > 0.6:
-            return (row_index, numpy.where(row != 0)[0][0])
+        if np.any(row) and np.mean([x if x == 0 else 1 for x in row]) > 0.6:
+            return (row_index, np.where(row != 0)[0][0])
 
 
-def crop_to_sudoku_border(image):
+def crop_to_sudoku_border(image: npt.NDArray) -> npt.NDArray:
     num_rows, num_cols = image.shape
     top_left_corner = find_sudoku_board_corner(image)
     reversed_img = image[::-1, ::-1]
     bottom_right_corner = find_sudoku_board_corner(reversed_img)
-
     return image[
         top_left_corner[0] : num_rows - bottom_right_corner[0],
         top_left_corner[1] : num_cols - bottom_right_corner[1],
