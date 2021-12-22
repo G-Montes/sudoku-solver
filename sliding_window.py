@@ -5,6 +5,6 @@ import cv2 as cv
 image_path = get_image_path("unsolved_1.png", use_solved_folder=False)
 image = load_img(image_path)
 edges = get_image_edges(image)
-show_image(image, "oh")
-show_image(edges, "flask")
+
+cv.imshow("edges", edges)
 cv.waitKey(0)
