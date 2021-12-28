@@ -3,3 +3,4 @@ __pycache__/utils.cpython-39.pyc
 __pycache__/sudoku_utils.cpython-39.pyc
 __pycache__/edge_finder.cpython-39.pyc
 __pycache__/image_utils.cpython-39.pyc
+__pycache__/corner_finder.cpython-39.pyc
