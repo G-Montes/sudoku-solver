@@ -1,5 +1,6 @@
-import numpy as np
 import cv2 as cv  # type: ignore
+import numpy as np
+import numpy.typing as npt
 
 
 def find_sudoku_board_corner(
@@ -28,3 +29,10 @@ def crop_to_sudoku_border(image: npt.NDArray) -> npt.NDArray:
         top_left_corner[0] : num_rows - bottom_right_corner[0],
         top_left_corner[1] : num_cols - bottom_right_corner[1],
     ]
+
+
+def find_harris_corners(image: npt.NDArray) -> npt.NDArray:
+    # conerHarris() takes single channel 8-bit or floating point img
+    float_img = np.float32(image)
+    float_img = cv.dilate(float_img, None)
+    return cv.cornerHarris(float_img, 2, 3, 0.04)
