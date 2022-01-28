@@ -1,15 +1,16 @@
-import os
 import json
-import cv2 as cv
-import numpy.typing as npt
+import os
+
+import cv2
+import numpy.typing
 
 
-def show_image(img: npt.NDArray, name: str = "") -> None:
-    cv.imshow(name, img)
+def show_image(img: numpy.typing.NDArray, name: str = "") -> None:
+    cv2.imshow(name, img)
 
 
-def load_img(image_path: str) -> npt.NDArray:
-    image = cv.imread(image_path)
+def load_img(image_path: str) -> numpy.typing.NDArray:
+    image = cv2.imread(image_path)
     if image is None:
         raise Exception("Something went wrong with the image loading.")
     else:

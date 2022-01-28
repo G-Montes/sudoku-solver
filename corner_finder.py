@@ -1,26 +1,32 @@
-import cv2 as cv  # type: ignore
-import numpy as np
-import numpy.typing as npt
+import cv2  # type: ignore
+import numpy
+import numpy.typing
 
 
 def find_sudoku_board_corner(
-    image: npt.NDArray, color_pixel_ratio: float = 0.5
+    image: numpy.typing.NDArray, color_pixel_ratio: float = 0.5
 ) -> tuple[int, int]:
     coord = [0, 0]  # Default if no suitable corner found
     for row_index, row in enumerate(image):
         # Checks if non-black pixel present in row & that non-black pixel ratio is over threshold
         # Reduces chance noise will get marked as corner.
-        if np.any(row) and np.count_nonzero(row) / image.shape[0] > color_pixel_ratio:
+        if (
+            numpy.any(row)
+            and numpy.count_nonzero(row) / image.shape[0] > color_pixel_ratio
+        ):
             coord[0] = row_index
             break
     for row_index, row in enumerate(image.transpose()):
-        if np.any(row) and np.count_nonzero(row) / image.shape[1] > color_pixel_ratio:
+        if (
+            numpy.any(row)
+            and numpy.count_nonzero(row) / image.shape[1] > color_pixel_ratio
+        ):
             coord[1] = row_index
             break
     return tuple(coord)
 
 
-def crop_to_sudoku_border(image: npt.NDArray) -> npt.NDArray:
+def crop_to_sudoku_border(image: numpy.typing.NDArray) -> numpy.typing.NDArray:
     num_rows, num_cols = image.shape
     top_left_corner = find_sudoku_board_corner(image)
     bottom_right_corner = find_sudoku_board_corner(image[::-1, ::-1])
@@ -31,8 +37,8 @@ def crop_to_sudoku_border(image: npt.NDArray) -> npt.NDArray:
     ]
 
 
-def find_harris_corners(image: npt.NDArray) -> npt.NDArray:
+def find_harris_corners(image: numpy.typing.NDArray) -> numpy.typing.NDArray:
     # conerHarris() takes single channel 8-bit or floating point img
-    float_img = np.float32(image)
-    float_img = cv.dilate(float_img, None)
-    return cv.cornerHarris(float_img, 2, 3, 0.04)
+    float_img = numpy.float32(image)
+    float_img = cv2.dilate(float_img, None)
+    return cv2.cornerHarris(float_img, 2, 3, 0.04)
