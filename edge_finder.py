@@ -21,7 +21,7 @@ def get_image_edges(
     kernel_size: int = 3,
     matrix: tuple[int, int] = (3, 3),
 ) -> numpy.typing.NDArray:
-    grayscale_img = cv2.cv2tColor(image, cv2.COLOR_BGR2GRAY)
+    grayscale_img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     img_edges = find_edges(image, thresh, ratio, kernel_size, matrix)
     # Returns a 2D array
     return img_edges
