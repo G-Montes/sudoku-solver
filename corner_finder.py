@@ -40,5 +40,5 @@ def crop_to_sudoku_border(image: numpy.typing.NDArray) -> numpy.typing.NDArray:
 def find_harris_corners(image: numpy.typing.NDArray) -> numpy.typing.NDArray:
     # conerHarris() takes single channel 8-bit or floating point img
     float_img = numpy.float32(image)
-    float_img = cv2.dilate(float_img, None)
+    float_img = cv2.erode(float_img, None)
     return cv2.cornerHarris(float_img, 2, 3, 0.04)
