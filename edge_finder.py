@@ -1,5 +1,5 @@
 import cv2  # type: ignore
-import numpy as numpy
+import numpy
 import numpy.typing
 
 
