@@ -4,7 +4,7 @@ import numpy.typing
 
 
 def find_sudoku_board_corner(
-    image: numpy.typing.NDArray, color_pixel_ratio: float = 0.5
+    image: numpy.typing.NDArray, color_pixel_ratio: float = 0.75
 ) -> tuple[int, int]:
     coord = [0, 0]  # Default if no suitable corner found
     for row_index, row in enumerate(image):
@@ -42,3 +42,30 @@ def find_harris_corners(image: numpy.typing.NDArray) -> numpy.typing.NDArray:
     float_img = numpy.float32(image)
     float_img = cv2.erode(float_img, None)
     return cv2.cornerHarris(float_img, 2, 3, 0.04)
+
+
+def find_intersections(
+    image: numpy.typing.NDArray, threshold: int = 0.75
+) -> numpy.typing.NDArray:
+    horiz_lines = numpy.empty(image.shape, dtype=numpy.float32)
+    vert_lines = numpy.empty(numpy.transpose(image).shape, dtype=numpy.float32)
+    for index, row in enumerate(image):
+        if numpy.any(row) and ((numpy.count_nonzero(row) / row.shape[0]) >= threshold):
+            horiz_lines[index] = row
+    for index, row in enumerate(numpy.transpose(image)):
+        if numpy.any(row) and ((numpy.count_nonzero(row) / row.shape[0]) >= threshold):
+            vert_lines[index] = row
+    vert_lines = numpy.transpose(vert_lines)
+
+    intersections = numpy.empty(image.shape, dtype=numpy.float32)
+    for row_indx, row in enumerate(image):
+        for col_indx, _ in enumerate(row):
+            if (
+                horiz_lines[row_indx][col_indx] != 0 or vert_lines[row_indx][col_indx]
+            ) and horiz_lines[row_indx][col_indx] == vert_lines[row_indx][col_indx]:
+                intersections[row_indx][col_indx] = 255.0
+
+    cv2.imshow("horiz", horiz_lines)
+    cv2.imshow("vert", vert_lines)
+    cv2.imshow("intersection", intersections)
+    return intersections
