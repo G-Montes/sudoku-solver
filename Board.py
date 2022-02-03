@@ -30,7 +30,7 @@ class Board:
         for row in self.board:
             print(row)
 
-    def find_next_unsolved_cell(self) -> tuple[int, int]:
+    def find_next_unsolved_cell(self) -> "tuple[int, int]":
         """
         Returns a tuple containing the coordinates of the next EMPTY value.
         Otherwise, it returns a tuple containing INVALID_INDEX
@@ -45,7 +45,7 @@ class Board:
 
         return (self.INVALID_INDEX, self.INVALID_INDEX)
 
-    def get_section(self, coord: tuple[int, int], section_type) -> List[int]:
+    def get_section(self, coord: "tuple[int, int]", section_type) -> List[int]:
         if section_type == self.SECTION["ROW"]:
             return self.board[coord[0]][:]
         elif section_type == self.SECTION["COL"]:
@@ -74,7 +74,7 @@ class Board:
             return section
 
     def is_valid_section(
-        self, coord: tuple[int, int], section_type, check_complete: bool = False
+        self, coord: "tuple[int, int]", section_type, check_complete: bool = False
     ) -> bool:
         """
         Returns True if the list contains unique natural numbers. Optional paramater
@@ -93,7 +93,7 @@ class Board:
 
         return True
 
-    def is_coord_valid(self, coord: tuple[int, int]) -> bool:
+    def is_coord_valid(self, coord: "tuple[int, int]") -> bool:
         """
         Returns True if the column, row, and region that the coordinate
         is in are considered valid sections.

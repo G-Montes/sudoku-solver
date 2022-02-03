@@ -8,7 +8,7 @@ def find_edges(
     thresh: int,
     ratio: int,
     kernel_size: int,
-    matrix: tuple[int, int],
+    matrix: "tuple[int, int]",
 ) -> numpy.typing.NDArray:
     img_blur = cv2.blur(image, matrix)
     return cv2.Canny(img_blur, thresh, thresh * ratio, kernel_size)
@@ -19,7 +19,7 @@ def get_image_edges(
     thresh=75,
     ratio: int = 3,
     kernel_size: int = 3,
-    matrix: tuple[int, int] = (3, 3),
+    matrix: "tuple[int, int]" = (3, 3),
 ) -> numpy.typing.NDArray:
     grayscale_img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     img_edges = find_edges(grayscale_img, thresh, ratio, kernel_size, matrix)

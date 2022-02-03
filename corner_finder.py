@@ -5,7 +5,7 @@ import numpy.typing
 
 def find_sudoku_board_corner(
     image: numpy.typing.NDArray, color_pixel_ratio: float = 0.75
-) -> tuple[int, int]:
+) -> "tuple[int, int]":
     coord = [0, 0]  # Default if no suitable corner found
     for row_index, row in enumerate(image):
         # Checks if non-black pixel present in row & that non-black pixel ratio is over threshold
