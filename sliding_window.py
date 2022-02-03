@@ -7,7 +7,7 @@ import edge_finder
 import image_utils
 
 
-def find_boxes(sudoku_img: numpy.typing.NDArray) -> tuple[int, int]:
+def find_boxes(sudoku_img: numpy.typing.NDArray) -> "tuple[int, int]":
     # TODO: Add functionality to detect boundaries of a sudoku box
     edges = edge_finder.get_image_edges(sudoku_img)
     corners = corner_finder.find_harris_corners(edges)
