@@ -2,9 +2,13 @@ from typing import List
 
 
 class Board:
+    """
+    A class to represent a sudoku board.
+    """
+
     EMPTY = 0
     INVALID_INDEX = -1
-    SECTION = {
+    SECTIONS = {
         "ROW": 0,
         "COL": 1,
         "REGION": 2,
@@ -41,43 +45,40 @@ class Board:
 
         return (self.INVALID_INDEX, self.INVALID_INDEX)
 
-    def get_section(self, row_index:int, col_index:int, section_type) -> List[int]:
+    def get_section(self, row_index: int, col_index: int, section_type) -> List[int]:
         """
-        Returns a list containing the row, column, or subregion of the coordinates provided. 
+        Returns a list containing the row, column, or subregion of the coordinates provided.
         """
-        if section_type == self.SECTION["ROW"]:
+        if section_type == self.SECTIONS["ROW"]:
             return self.board[row_index]
-        elif section_type == self.SECTION["COL"]:
+        if section_type == self.SECTIONS["COL"]:
             return [row[col_index] for row in self.board]
-        else:
-            subregion = []
-            # Finds the starting (top left) indexes for the region the provided coordinates are in
-            region_start_row_index = (
-                row_index // self.region_row_size
-            ) * self.region_row_size
-            region_start_col_index = (
-                col_index // self.region_col_size
-            ) * self.region_col_size
 
-            for i in range(
-                region_start_row_index, region_start_row_index + self.region_row_size
+        subregion = []
+        # Finds the starting (top left) indexes for the region the provided coordinates are in
+        region_start_row_index = (
+            row_index // self.region_row_size
+        ) * self.region_row_size
+        region_start_col_index = (
+            col_index // self.region_col_size
+        ) * self.region_col_size
+
+        for i in range(
+            region_start_row_index, region_start_row_index + self.region_row_size
+        ):
+            for j in range(
+                region_start_col_index,
+                region_start_col_index + self.region_col_size,
             ):
-                for j in range(
-                    region_start_col_index,
-                    region_start_col_index + self.region_col_size,
-                ):
-                    subregion.append(self.board[i][j])
+                subregion.append(self.board[i][j])
 
-            return subregion
+        return subregion
 
-    def is_valid_section(
-        self, coord: "tuple[int, int]", section_type, check_complete: bool = False
-    ) -> bool:
+    def is_valid_section(self, section: List[int], check_complete: bool) -> bool:
         """
         Returns True if the list contains unique natural numbers. Optional paramater
         that can be passed to check whether section contains ONLY unique natural numbers.
         """
-        section = self.get_section(coord[0], coord[1], section_type)
         invalid_list = []
         # Allows this function to check if section is complete instead
         if check_complete:
@@ -85,24 +86,25 @@ class Board:
         for x in section:
             if x in invalid_list:
                 return False
-            elif x != 0:
+            if x != 0:
                 invalid_list.append(x)
 
         return True
 
-    def is_coord_valid(self, coord: "tuple[int, int]") -> bool:
+    def is_coord_valid(
+        self, coord: "tuple[int, int]", check_complete: bool = False
+    ) -> bool:
         """
         Returns True if the column, row, and region that the coordinate
         is in are considered valid sections.
         """
-        if (
-            self.is_valid_section(coord, self.SECTION["ROW"]) and 
-            self.is_valid_section(coord, self.SECTION["COL"]) and
-            self.is_valid_section(coord, self.SECTION["REGION"])
-        ):
-            return True
-        else:
-            return False
+
+        for section_type in self.SECTIONS:
+            section = self.get_section(coord[0], coord[1], section_type)
+            if not self.is_valid_section(section, check_complete):
+                return False
+
+        return True
 
     def solve_sudoku(self) -> bool:
         """
@@ -113,7 +115,7 @@ class Board:
         If no valid number possible for a cell, goes back to previous filled-in cell
         and tries a different valid number, repeats as necessary.
         """
-        empty_cell = self.find_next_unsolved_cell()
+        empty_cell = self.find_next_empty_cell()
         if empty_cell[0] == self.INVALID_INDEX:
             return True
 
