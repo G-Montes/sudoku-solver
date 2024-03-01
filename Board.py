@@ -99,7 +99,7 @@ class Board:
         is in are considered valid sections.
         """
 
-        for section_type in self.SECTIONS:
+        for section_type in self.SECTIONS.values():
             section = self.get_section(coord[0], coord[1], section_type)
             if not self.is_valid_section(section, check_complete):
                 return False
@@ -109,7 +109,7 @@ class Board:
     def solve_sudoku(self) -> bool:
         """
         Returns True if a solution has been found. Returns false otherwise.
-        Implements a recursive brute force algorithm.
+        Implements a backtracking.
 
         Assigns a valid number to the next empty cell. Repeats until board complete.
         If no valid number possible for a cell, goes back to previous filled-in cell
@@ -127,3 +127,21 @@ class Board:
             self.board[empty_cell[0]][empty_cell[1]] = self.EMPTY
 
         return False
+
+
+puzzle_arr = [
+    [0, 0, 0, 4, 6, 0, 0, 3, 0],
+    [3, 9, 0, 0, 0, 1, 7, 0, 5],
+    [2, 8, 4, 0, 0, 0, 0, 9, 0],
+    [5, 0, 0, 8, 7, 0, 6, 1, 3],
+    [8, 3, 1, 0, 9, 0, 0, 0, 0],
+    [0, 0, 2, 5, 1, 0, 0, 8, 0],
+    [0, 6, 0, 0, 0, 0, 0, 0, 9],
+    [4, 0, 5, 0, 2, 6, 3, 0, 0],
+    [0, 0, 0, 0, 4, 7, 5, 6, 1],
+]
+
+puzzle = Board(puzzle_arr, 3, 3)
+puzzle.print_unformatted_board()
+print(puzzle.solve_sudoku())
+puzzle.print_unformatted_board()
